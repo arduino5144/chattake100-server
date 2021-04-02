@@ -1,6 +1,9 @@
 import socket
 from _thread import *
-import server.plugins as plugins
+from plugins import datetime_command
+
+# datetime_command_instance = datetime_command
+
 ServerSideSocket = socket.socket()
 host = '127.0.0.1'
 port = 2004
@@ -25,8 +28,8 @@ def multi_threaded_client(connection):
         # connection.sendall(str.encode(response))
 
         print(words_received)
-        command = plugins.c
-
+        result = datetime_command.commands[words_received[0]]()
+        connection.send(str.encode(result))
     connection.close()
 
 while True:
