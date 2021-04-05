@@ -1,8 +1,13 @@
 import socket
 from _thread import *
-from plugins import datetime_command
+import plugins
 
-# datetime_command_instance = datetime_command
+list_of_classes = [
+    [plugins.datetime_command.DatetimePlugin,
+     plugins.hello_world_command.HelloWorldPlugin
+     ]
+]
+list_of_instances = [cls() for cls in list_of_classes]
 
 ServerSideSocket = socket.socket()
 host = '127.0.0.1'
@@ -28,7 +33,7 @@ def multi_threaded_client(connection):
         # connection.sendall(str.encode(response))
 
         print(words_received)
-        result = datetime_command.commands[words_received[0]]()
+        result = datetime_command_instance.commands[words_received[0]]()
         connection.send(str.encode(result))
     connection.close()
 
