@@ -3,11 +3,23 @@ from _thread import *
 import plugins
 
 list_of_classes = [
-    [plugins.datetime_command.DatetimePlugin,
-     plugins.hello_world_command.HelloWorldPlugin
-     ]
+    plugins.datetime_command.DatetimePlugin,
+    plugins.hello_world_command.HelloWorldPlugin
 ]
-list_of_instances = [cls() for cls in list_of_classes]
+
+list_of_instances = list()
+dict_of_things = dict()
+
+for cls in list_of_classes:
+    list_of_instances.append(cls())
+    for command in cls().commands:
+        dict_of_things[command] = cls().commands.get(command)
+        print(command)
+print(dict_of_things)
+
+
+
+# list_of_instances = [cls() for cls in list_of_classes]
 
 ServerSideSocket = socket.socket()
 host = '127.0.0.1'
@@ -33,7 +45,7 @@ def multi_threaded_client(connection):
         # connection.sendall(str.encode(response))
 
         print(words_received)
-        result = datetime_command_instance.commands[words_received[0]]()
+        result = dict_of_things[words_received[0]]()
         connection.send(str.encode(result))
     connection.close()
 
