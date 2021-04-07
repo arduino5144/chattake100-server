@@ -4,7 +4,8 @@ import plugins
 
 list_of_classes = [
     plugins.datetime_command.DatetimePlugin,
-    plugins.hello_world_command.HelloWorldPlugin
+    plugins.hello_world_command.HelloWorldPlugin,
+    plugins.math_plugin.MathPlugin
 ]
 
 list_of_instances = list()
@@ -45,7 +46,7 @@ def multi_threaded_client(connection):
         # connection.sendall(str.encode(response))
 
         print(words_received)
-        result = dict_of_things[words_received[0]]()
+        result = dict_of_things[words_received[0]](words_received[1:])
         connection.send(str.encode(result))
     connection.close()
 
