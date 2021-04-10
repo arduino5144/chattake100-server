@@ -35,6 +35,7 @@ print('Socket is listening..')
 ServerSideSocket.listen(5)
 
 def multi_threaded_client(connection):
+    username = ""
     print()
     connection.send(str.encode('Server is working:'))
     while True:
