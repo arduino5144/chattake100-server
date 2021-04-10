@@ -35,6 +35,7 @@ print('Socket is listening..')
 ServerSideSocket.listen(5)
 
 def multi_threaded_client(connection):
+    print()
     connection.send(str.encode('Server is working:'))
     while True:
         encoded_data = connection.recv(2048)
@@ -46,14 +47,14 @@ def multi_threaded_client(connection):
         # connection.sendall(str.encode(response))
 
         print(words_received)
-        result = dict_of_things[words_received[0]](words_received[1:])
-        connection.send(str.encode(result))
+        result = dict_of_things[words_received[0]](words_received)
+        connection.send(str.encode(str(result)))
     connection.close()
 
 while True:
     Client, address = ServerSideSocket.accept()
     print('Connected to: ' + address[0] + ':' + str(address[1]))
     start_new_thread(multi_threaded_client, (Client, ))
-    ThreadCount += 1
-    print('Thread Number: ' + str(ThreadCount))
+    # ThreadCount += 1
+    # print('Thread Number: ' + str(ThreadCount))
 ServerSideSocket.close()

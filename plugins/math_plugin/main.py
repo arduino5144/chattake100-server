@@ -1,8 +1,11 @@
 import api.v1
 class MathPlugin:
-    def add_numbers(*args):
+    def add_numbers(args):
         print(args)
-        return args[0]+args[1]
+        try:
+            return int(args[1])+int(args[2])
+        except:
+            return "Please input integers."
     commands = {
         "ADD": add_numbers
     }
