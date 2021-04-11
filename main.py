@@ -1,6 +1,7 @@
 import socket
 from _thread import *
 import plugins
+import users
 
 list_of_classes = [
     plugins.datetime_command.DatetimePlugin,
@@ -18,7 +19,13 @@ for cls in list_of_classes:
         print(command)
 print(dict_of_things)
 
-
+def receive_data(connection):
+    encoded_data = connection.recv(2048)
+    data = encoded_data.decode('utf-8')
+    words_received = data.split()
+    if not data:
+        raise Exception
+    return words_received
 
 # list_of_instances = [cls() for cls in list_of_classes]
 
@@ -35,18 +42,24 @@ print('Socket is listening..')
 ServerSideSocket.listen(5)
 
 def multi_threaded_client(connection):
-    username = ""
-    print()
+    words_received = receive_data(connection)
+    print(words_received)
+    user = users.get_user(words_received[1], words_received[2])
+    print(user)
+    if user == None:
+        connection.send(str.encode("Incorrect username or password"))
+        print("A user failed to connect")
+        connection.close()
+    else:
+        connection.send(str.encode("Hi, " + user.name + "!"))
+        print("A user could successfully connect")
     connection.send(str.encode('Server is working:'))
-    while True:
-        encoded_data = connection.recv(2048)
-        data = encoded_data.decode('utf-8')
-        words_received = data.split()
-        response = 'Server message: ' + data
-        if not data:
-            break
-        # connection.sendall(str.encode(response))
 
+    while True:
+        try:
+            words_received = receive_data(connection)
+        except:
+            break
         print(words_received)
         result = dict_of_things[words_received[0]](words_received)
         connection.send(str.encode(str(result)))
