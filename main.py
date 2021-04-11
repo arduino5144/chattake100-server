@@ -4,9 +4,10 @@ import plugins
 import users
 
 list_of_classes = [
-    plugins.datetime_command.DatetimePlugin,
-    plugins.hello_world_command.HelloWorldPlugin,
-    plugins.math_plugin.MathPlugin
+    plugins.DatetimePlugin,
+    plugins.HelloWorldPlugin,
+    plugins.MathPlugin,
+    plugins.NameReminderPlugin
 ]
 
 list_of_instances = list()
@@ -41,12 +42,13 @@ except socket.error as e:
 print('Socket is listening..')
 ServerSideSocket.listen(5)
 
+
 def multi_threaded_client(connection):
     words_received = receive_data(connection)
     print(words_received)
     user = users.get_user(words_received[1], words_received[2])
     print(user)
-    if user == None:
+    if user is None:
         connection.send(str.encode("Incorrect username or password"))
         print("A user failed to connect")
         connection.close()
@@ -61,7 +63,7 @@ def multi_threaded_client(connection):
         except:
             break
         print(words_received)
-        result = dict_of_things[words_received[0]](words_received)
+        result = dict_of_things[words_received[0]](args=words_received, user=user)
         connection.send(str.encode(str(result)))
     connection.close()
 

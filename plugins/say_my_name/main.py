@@ -1,4 +1,10 @@
 import api.v1
-class HeloCommandPlugin(api.v1.Plugin):
-    def authenticate_with_server
-    commands = {}
+
+
+class NameReminderPlugin(api.v1.Plugin):
+    def send_name(self, args, user):
+        return user.name
+
+    commands = {
+        "WHATISMYUSERNAME": send_name
+    }

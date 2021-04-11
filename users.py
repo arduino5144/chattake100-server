@@ -18,6 +18,7 @@ users.append(User(name='Leonard', email='leonard@tussilago.eu', password='123'))
 users.append(User(name='Ken', email='ken@tussilago.eu', password='123'))
 users.append(User(name='Noelle', email='noelle@tussilago.eu', password='123'))
 
+
 def get_user(name, password):
     for user in users:
         if user.name == name and user.password == password:
