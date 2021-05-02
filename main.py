@@ -20,6 +20,7 @@ for cls in list_of_classes:
         print(command)
 print(dict_of_things)
 
+
 def receive_data(connection):
     encoded_data = connection.recv(2048)
     data = encoded_data.decode('utf-8')
@@ -29,19 +30,6 @@ def receive_data(connection):
     return words_received
 
 # list_of_instances = [cls() for cls in list_of_classes]
-
-ServerSideSocket = socket.socket()
-host = '127.0.0.1'
-port = 2004
-ThreadCount = 0
-try:
-    ServerSideSocket.bind((host, port))
-except socket.error as e:
-    print(str(e))
-
-print('Socket is listening..')
-ServerSideSocket.listen(5)
-
 
 def multi_threaded_client(connection):
     words_received = receive_data(connection)
@@ -69,10 +57,30 @@ def multi_threaded_client(connection):
     connection.close()
 
 
-while True:
-    Client, address = ServerSideSocket.accept()
-    print('Connected to: ' + address[0] + ':' + str(address[1]))
-    start_new_thread(multi_threaded_client, (Client, ))
+if __name__ == "__main__":
+    receive_socket = socket.socket()
+    submit_socket = socket.socket()
+    host = '127.0.0.1'
+    receive_port = 2004
+    submit_port = 2005
+    ThreadCount = 0
+    try:
+        receive_socket.bind((host, receive_port))
+        submit_socket.bind((host, submit_port))
+    except socket.error as e:
+        print(str(e))
+        exit()
+
+    print('Socket is listening..')
+    receive_socket.listen(5)
+    submit_socket.listen(5)
+
+    receive_client, receive_address = receive_socket.accept()
+    submit_client, submit_address = submit_socket.accept()
+    print('Connected to: ' + receive_address[0] + ':' + str(receive_address[1]))
+    print('Connected to: ' + submit_address[0] + ':' + str(submit_address[1]))
+    start_new_thread(multi_threaded_client, (submit_client, ))
+    start_new_thread(receive_data, (receive_client,))
     # ThreadCount += 1
     # print('Thread Number: ' + str(ThreadCount))
 ServerSideSocket.close()
