@@ -56,6 +56,7 @@ def multi_threaded_client(connection):
         connection.send(str.encode("Hi, " + user.name + "!"))
         print("A user could successfully connect")
     connection.send(str.encode('Server is working:'))
+    connection.send(str.encode('hello worls'))
 
     while True:
         try:
@@ -66,6 +67,7 @@ def multi_threaded_client(connection):
         result = dict_of_things[words_received[0]](args=words_received, user=user)
         connection.send(str.encode(str(result)))
     connection.close()
+
 
 while True:
     Client, address = ServerSideSocket.accept()

@@ -1,6 +1,6 @@
 import api.v1
 class MathPlugin:
-    def add_numbers(self, args, username):
+    def add_numbers(self, args, user):
         print(args)
         try:
             return int(args[1])+int(args[2])
