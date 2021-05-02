@@ -13,20 +13,29 @@ list_of_classes = [
 list_of_instances = list()
 dict_of_things = dict()
 
+command_prefix = '/'
+
 for cls in list_of_classes:
     list_of_instances.append(cls())
     for command in cls().commands:
         dict_of_things[command] = cls().commands.get(command)
-        print(command)
-print(dict_of_things)
+        # print(command)
+# print(dict_of_things)
+
 
 def receive_data(connection):
     encoded_data = connection.recv(2048)
     data = encoded_data.decode('utf-8')
-    words_received = data.split()
     if not data:
         raise Exception
-    return words_received
+    words_received = None
+    message = None
+    if data[0] == command_prefix:
+        words_received = data.split()
+        words_received[0] = words_received[0][1:]
+    else:
+        message = data
+    return words_received, message
 
 # list_of_instances = [cls() for cls in list_of_classes]
 
@@ -49,7 +58,7 @@ def prepare_and_send_message(connection, message):
 
 
 def multi_threaded_client(connection):
-    words_received = receive_data(connection)
+    words_received, _ = receive_data(connection)
     print(words_received)
     user = users.get_user(words_received[1], words_received[2])
     print(user)
@@ -61,19 +70,21 @@ def multi_threaded_client(connection):
         prepare_and_send_message(connection, "Hi, " + user.name + "!")
         print("A user could successfully connect")
     prepare_and_send_message(connection, 'Server is working:')
-    prepare_and_send_message(connection, 'hello worls')
 
     while True:
         try:
-            words_received = receive_data(connection)
+            words_received, message = receive_data(connection)
         except:
             break
-        print(words_received)
-        try:
-            result = dict_of_things[words_received[0]](args=words_received, user=user)
-            prepare_and_send_message(connection, str(result))
-        except KeyError:
-            pass
+        if words_received:
+            try:
+                result = dict_of_things[words_received[0]](args=words_received, user=user)
+                prepare_and_send_message(connection, str(result))
+            except KeyError:
+                prepare_and_send_message(connection, 'Invalid command')
+        else:
+            prepare_and_send_message(connection, 'Message received: '+ message)
+
     connection.close()
 
 
