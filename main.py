@@ -43,20 +43,25 @@ print('Socket is listening..')
 ServerSideSocket.listen(5)
 
 
+def prepare_and_send_message(connection, message):
+    msg = '{}\n'.format(message)
+    connection.send(str.encode(msg))
+
+
 def multi_threaded_client(connection):
     words_received = receive_data(connection)
     print(words_received)
     user = users.get_user(words_received[1], words_received[2])
     print(user)
     if user is None:
-        connection.send(str.encode("Incorrect username or password"))
+        prepare_and_send_message(connection, "Incorrect username or password")
         print("A user failed to connect")
         connection.close()
     else:
-        connection.send(str.encode("Hi, " + user.name + "!"))
+        prepare_and_send_message(connection, "Hi, " + user.name + "!")
         print("A user could successfully connect")
-    connection.send(str.encode('Server is working:'))
-    connection.send(str.encode('hello worls'))
+    prepare_and_send_message(connection, 'Server is working:')
+    prepare_and_send_message(connection, 'hello worls')
 
     while True:
         try:
@@ -64,8 +69,11 @@ def multi_threaded_client(connection):
         except:
             break
         print(words_received)
-        result = dict_of_things[words_received[0]](args=words_received, user=user)
-        connection.send(str.encode(str(result)))
+        try:
+            result = dict_of_things[words_received[0]](args=words_received, user=user)
+            prepare_and_send_message(connection, str(result))
+        except KeyError:
+            pass
     connection.close()
 
 

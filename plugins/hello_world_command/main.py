@@ -2,10 +2,10 @@ import api.v1
 
 
 class HelloWorldPlugin(api.v1.Plugin):
-    def send_hello_world(self, args, user):
+    def send_hello_world(args, user):
         return "Hello, World!"
 
-    def send_bananas(self, args, user):
+    def send_bananas(args, user):
         return "Bananas"
 
     commands = {
